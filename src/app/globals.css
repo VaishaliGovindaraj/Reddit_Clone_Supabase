@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+*{
+  box-sizing: border-box;
+}
+
+@layer components{
+    .button-primary{@apply bg-red-600 text-white px-8 py-4 text-4xl hover:text-amber-300 hover:bg-amber-900 font-bold rounded-2xl}
+    .button-secondary{@apply bg-red-600 text-white py-4 px-4 text-xl hover:text-amber-300 hover:bg-amber-900 font-bold rounded-2xl}
+    .button-tertiary{@apply bg-gray-800 text-white py-3 px-3 text-xl hover:text-amber-300 hover:bg-amber-900 font-bold rounded-2xl}
+}
