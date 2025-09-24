@@ -1,4 +1,4 @@
-import SignUp from "@/actions/sign-up"
+import {SignUp} from "@/actions/sign-up"
 
 const SignUpForm = () => {
     return(
