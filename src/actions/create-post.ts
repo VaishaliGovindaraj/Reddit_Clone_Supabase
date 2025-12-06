@@ -6,7 +6,7 @@ import { createClient } from "../../utils/supabase/server-client";
 import { postSchema } from "./schema"
 import { z } from "zod"
 import { revalidatePath } from "next/cache";
-import { uploadImage } from "../../utils/supabase/uploadImage";
+import { uploadImage } from "../../utils/supabase/upload-image";
 
 export const CreatePost = async (userdata:z.infer<typeof postSchema>) => {
     console.log("Image Parameter",userdata.image)
