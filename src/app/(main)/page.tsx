@@ -1,11 +1,13 @@
-
-import { createClient } from "../../../utils/supabase/browserclient";
-import { getPosts } from "../../../utils/supabase/queries";
+import { createClient } from "../../../utils/supabase/browserclient"
+// "@/utils/supabase/browser-client";
+import { getHomePosts } from "../../../utils/supabase/queries";
 import HomePosts from "@/components/Home/HomePosts";
+
+export const revalidate = 60;
 
 export default async function Home() {
   const supabase = await createClient();
-  const {data,error} = await getPosts(supabase)
+  const {data,error} = await getHomePosts(supabase)
   
 
   return (

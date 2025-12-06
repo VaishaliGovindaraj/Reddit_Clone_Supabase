@@ -1,15 +1,20 @@
-const LogOut = () => {
+'use client'
 
-        const handleLogOut = () => {
+import { LogOut } from "@/actions/log-out"
 
 
+const LogOutButton =  () => {
+        
+        const handleLogOut = () => {    
+            LogOut()
         }
         
         return(
             <div>
-                <button onClick={() => handleLogOut }>LogOut</button>
-
+                <button className="button-tertiary" onClick={handleLogOut} >LogOut</button>
             </div>
         )
 
 }
+
+export default LogOutButton

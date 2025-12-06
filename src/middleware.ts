@@ -1,10 +1,9 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextRequest, NextResponse } from "next/server"
 
-
-
 export const middleware = async (request: NextRequest) => {
         let supabaseResponse = NextResponse.next({request})
+   
 
         const supabase = createServerClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,7 +24,26 @@ export const middleware = async (request: NextRequest) => {
         )
 
         const {data:{user}, error} = await supabase.auth.getUser()
-        console.log("Hello from middleware")
-        console.log("User",user)
+       
 
+        // const protectedRoutes = [
+        //     /^\/create$/
+        // ]
+
+        
+  const protectedRoutes = [
+    /^\/create\/?$/  // matches /create and /create/
+  ]
+
+       
+
+        if(!user && protectedRoutes.some(route => route.test(request.nextUrl.pathname)) ){
+            const newUrl = request.nextUrl.clone()
+            newUrl.pathname = "/auth/login"
+            return NextResponse.redirect(newUrl)
+        }
+        return supabaseResponse
+
+
+        
 }
