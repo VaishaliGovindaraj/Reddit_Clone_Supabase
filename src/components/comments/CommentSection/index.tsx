@@ -1,4 +1,4 @@
-        
+
 'use client'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -16,28 +16,34 @@ const CommentSection = ({ slug ,user_id,id}: { slug: string,user_id:string,id:nu
     mutationFn: CreateComment,
     onSuccess: () => {
       reset()
-      toast.success("Comment added successfully!")
+      toast.success("Comment added successfully!", {
+        description: "Your comment is now visible"
+      })
     },
-    onError: () => {
-      toast.error("Failed to add comment")
+    onError: (error) => {
+      toast.error("Failed to add comment", {
+        description: "Please try again"
+      })
     }
   })
 
   return (
-    <div className="card p-6 mb-6 animate-fadeInUp" style={{animationDelay: '0.3s'}}>
-      <h3 className="text-xl font-bold text-gray-900 mb-4">Add a Comment</h3>
+    <div className="card fade-in mb-6" style={{animationDelay: '0.3s'}}>
+      <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+        Add a Comment
+      </h3>
       <form onSubmit={handleSubmit(values => {
         mutate({ comment_section: values.comment_section, slug, id})
       })} className="space-y-4">
         <div>
           <textarea
             {...register("comment_section")}
-            className="input-field min-h-[120px] resize-y"
+            className={errors.comment_section ? "input-field-error resize-y" : "textarea-field"}
             placeholder="Share your thoughts..."
             disabled={isPending}
           />
           {errors.comment_section && (
-            <p className="text-red-500 text-sm mt-2 font-medium">
+            <p className="form-error">
               {errors.comment_section.message}
             </p>
           )}
@@ -46,9 +52,14 @@ const CommentSection = ({ slug ,user_id,id}: { slug: string,user_id:string,id:nu
         <button
           type="submit"
           disabled={isPending}
-          className="button-secondary w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+          className="button-primary w-full sm:w-auto"
         >
-          {isPending ? "Posting..." : "Post Comment"}
+          {isPending ? (
+            <span className="flex items-center gap-2">
+              <span className="loading-spinner w-4 h-4"></span>
+              Posting...
+            </span>
+          ) : "Post Comment"}
         </button>
       </form>
     </div>

@@ -5,13 +5,16 @@ import SearchInput from "../Search"
 
 const Header = () => {
     return(
-        <header className="flex  items-center justify-evenly pb-4 flex-wrap ">
-                <Logo />
-                <SearchInput />
-                <AccountLinks />
-                {/* <button className="button-tertiary">Test</button> */}
-                
-                <div className="mt-4 mx-auto w-[90%] border-b-3 border-black"></div>
+        <header className="header-nav">
+            <div className="container-main py-4">
+                <div className="flex items-center justify-between gap-6 flex-wrap">
+                    <Logo />
+                    <div className="flex-1 max-w-2xl">
+                        <SearchInput />
+                    </div>
+                    <AccountLinks />
+                </div>
+            </div>
         </header>
 
     )

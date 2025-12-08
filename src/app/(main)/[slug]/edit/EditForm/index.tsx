@@ -7,7 +7,7 @@ import { EditPost } from "../../../../../actions/edit-posts"
 import { postSchema } from "../../../../../actions/schema"
 import z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import ErrorMessage from "../../../../../components/ErrorComponent"
+import { toast } from "sonner"
 
 const EditForm = ({postId,initialValues}:{postId:number,initialValues:Pick<Tables<'posts'>,"title"|"content"|"image">}) => {
 
@@ -24,16 +24,28 @@ const EditForm = ({postId,initialValues}:{postId:number,initialValues:Pick<Table
         }
     })
 
-    const {mutate,isPending,error} = useMutation({
-        mutationFn: EditPost
+    const {mutate,isPending} = useMutation({
+        mutationFn: EditPost,
+        onSuccess: () => {
+            toast.success("Post updated successfully!", {
+                description: "Your changes have been saved. Redirecting..."
+            })
+        },
+        onError: (error) => {
+            toast.error("Failed to update post", {
+                description: error.message || "Please try again later"
+            })
+        }
     })
 
     return (
-        <div className="max-w-3xl mx-auto px-4 py-8">
-            <div className="card p-8 animate-fadeInUp">
+        <div className="container-narrow">
+            <div className="card fade-in">
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">Edit Post</h1>
-                    <p className="text-gray-600">Update your post details</p>
+                    <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent mb-2">
+                        Edit Post
+                    </h1>
+                    <p className="text-gray-600 dark:text-gray-400">Update your post details</p>
                 </div>
 
                 <form onSubmit={handleSubmit(values => {
@@ -45,71 +57,70 @@ const EditForm = ({postId,initialValues}:{postId:number,initialValues:Pick<Table
                                             mutate({postId, userdata:{title:values.title,content:values.content,image:imageForm}})})} className="space-y-6">
 
                     <div>
-                        <label htmlFor="title" className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label htmlFor="title" className="form-label">
                             Post Title
                         </label>
                         <input
                             id="title"
                             {...register("title")}
-                            className="input-field"
-                            placeholder="What's your post called?"
+                            className={errors.title ? "input-field-error" : "input-field"}
+                            placeholder="What's your post about?"
                             disabled={isPending}
                         />
-                        {errors.title && <ErrorMessage message={errors.title.message!} />}
+                        {errors.title && <p className="form-error">{errors.title.message}</p>}
                     </div>
 
                     <div>
-                        <label htmlFor="content" className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label htmlFor="content" className="form-label">
                             Content
                         </label>
                         <textarea
                             id="content"
                             {...register("content")}
-                            className="input-field min-h-[200px] resize-y"
+                            className={errors.content ? "input-field-error resize-y" : "textarea-field"}
                             placeholder="Share your story..."
                             disabled={isPending}
                         />
-                        {errors.content && <ErrorMessage message={errors.content.message!} />}
+                        {errors.content && <p className="form-error">{errors.content.message}</p>}
                     </div>
 
                     <div>
                         {initialValues.image && (
-                            <div className="mb-4">
-                                <p className="text-sm font-semibold text-gray-700 mb-2">Current Image</p>
+                            <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <p className="form-label mb-3">Current Image</p>
                                 <img
-                                    className="w-full h-auto rounded-xl shadow-md"
+                                    className="w-full h-auto rounded-lg shadow-md"
                                     src={initialValues.image}
                                     alt="Current post image"
                                 />
                             </div>
                         )}
-                        <label htmlFor="image" className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label htmlFor="image" className="form-label">
                             {initialValues.image ? "Upload New Image (Optional)" : "Upload an Image (Optional)"}
                         </label>
                         <input
                             type="file"
                             id="image"
                             {...register("image")}
-                            className="input-field file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                            className="input-field file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
                             accept="image/*"
                             disabled={isPending}
                         />
-                        {errors.image && <ErrorMessage message={errors.image.message!} />}
+                        {errors.image && <p className="form-error">{errors.image.message}</p>}
                     </div>
 
                     <button
                         type="submit"
-                        className="button-secondary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="button-primary w-full"
                         disabled={isPending}
                     >
-                        {isPending ? "Updating Post..." : "Update Post"}
+                        {isPending ? (
+                            <span className="flex items-center justify-center gap-2">
+                                <span className="loading-spinner w-5 h-5"></span>
+                                Updating Post...
+                            </span>
+                        ) : "Update Post"}
                     </button>
-
-                    {error && (
-                        <div className="mt-4">
-                            <ErrorMessage message={error.message} />
-                        </div>
-                    )}
                 </form>
             </div>
         </div>
