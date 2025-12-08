@@ -10,14 +10,14 @@ const AccountLinks =async () => {
 
     return(
         <div>
-            {user 
-            ? 
-            <div className="flex items-center m-2">
-            <Link href="/create" className="button-tertiary m-2">Create Post</Link>
-            <LogOutButton />
+            {user
+            ?
+            <div className="flex items-center gap-3">
+                <Link href="/create" className="button-secondary">Create Post</Link>
+                <LogOutButton />
             </div>
-            : 
-            <Link href="/auth/login" className="button-secondary">Log In</Link>}
+            :
+            <Link href="/auth/login" className="button-primary">Log In</Link>}
         </div>
     )
 }

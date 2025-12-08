@@ -4,8 +4,8 @@ import { LogIn } from "@/actions/log-in"
 import { useForm } from "react-hook-form"
 import { zodResolver  } from "@hookform/resolvers/zod"
 import { logInSchema } from "@/actions/schema"
-import ErrorMessage from "@/components/ErrorComponent"
 import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
 
 const LogInForm = () => {
 
@@ -17,30 +17,65 @@ const LogInForm = () => {
 
     const {mutate,isPending, error} = useMutation({
         mutationFn : LogIn,
-      
+        onSuccess: () => {
+            toast.success("Welcome back! You're now logged in.", {
+                description: "Redirecting to homepage...",
+            })
+        },
+        onError: (error) => {
+            toast.error("Login failed", {
+                description: error.message || "Please check your credentials and try again.",
+            })
+        }
     })
 
     return(
-        <>
-        <form onSubmit={handleSubmit(values => mutate(values))}  className="flex flex-col m-auto">
-         
-            <fieldset className="m-2">
-                <label htmlFor="email">Enter your email</label>
-                <input id="email" className="ml-2 bg-gray-300 rounded-2xl p-2 " {...register("email")}  placeholder="enter your email id"/>
-                {errors.email  && <ErrorMessage message={errors.email.message!} />}
-            </fieldset>
+        <div className="form-container fade-in">
+            <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                Welcome Back
+            </h2>
 
-              <fieldset>
-                <label htmlFor="password">Enter your password</label>
-                <input id="password" type="password" {...register("password")} className="ml-2  bg-gray-300 rounded-2xl p-2 " placeholder="enter your password id"/>
-                {errors.password  && <ErrorMessage message={errors.password.message!} />}
-            </fieldset>
+            <form onSubmit={handleSubmit(values => mutate(values))} className="space-y-6">
+                <div>
+                    <label htmlFor="email" className="form-label">Email Address</label>
+                    <input
+                        id="email"
+                        type="email"
+                        className={errors.email ? "input-field-error" : "input-field"}
+                        {...register("email")}
+                        placeholder="you@example.com"
+                        disabled={isPending}
+                    />
+                    {errors.email && <p className="form-error">{errors.email.message}</p>}
+                </div>
 
-            <button className="button-secondary w-1/4">{isPending ? "Logging you In!" : "Log In"}</button>
-        </form>
-        {error && <p>{error.message}</p>}
-        
-        </>
+                <div>
+                    <label htmlFor="password" className="form-label">Password</label>
+                    <input
+                        id="password"
+                        type="password"
+                        className={errors.password ? "input-field-error" : "input-field"}
+                        {...register("password")}
+                        placeholder="Enter your password"
+                        disabled={isPending}
+                    />
+                    {errors.password && <p className="form-error">{errors.password.message}</p>}
+                </div>
+
+                <button
+                    type="submit"
+                    className="button-primary w-full"
+                    disabled={isPending}
+                >
+                    {isPending ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <span className="loading-spinner w-5 h-5"></span>
+                            Logging you in...
+                        </span>
+                    ) : "Log In"}
+                </button>
+            </form>
+        </div>
     )
 }
 
