@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form"
 import { postSchema } from "../../../actions/schema"
 import { useMutation } from "@tanstack/react-query"
 import { CreatePost } from "../../../actions/create-post"
-import ErrorMessage from "../../../components/ErrorComponent"
 import z from "zod"
+import { toast } from "sonner"
 
 const CreatePage = () => {
 
@@ -17,16 +17,28 @@ const CreatePage = () => {
         resolver:zodResolver(schemaWithImage)
     })
 
-    const {mutate,isPending,error} = useMutation({
-        mutationFn:CreatePost
+    const {mutate,isPending} = useMutation({
+        mutationFn:CreatePost,
+        onSuccess: () => {
+            toast.success("Post created successfully!", {
+                description: "Your post is now live. Redirecting..."
+            })
+        },
+        onError: (error) => {
+            toast.error("Failed to create post", {
+                description: error.message || "Please try again later"
+            })
+        }
     })
 
     return (
-        <div className="max-w-3xl mx-auto px-4 py-8">
-            <div className="card p-8 animate-fadeInUp">
+        <div className="container-narrow">
+            <div className="card fade-in">
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">Create New Post</h1>
-                    <p className="text-gray-600">Share your thoughts with the community</p>
+                    <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent mb-2">
+                        Create New Post
+                    </h1>
+                    <p className="text-gray-600 dark:text-gray-400">Share your thoughts with the community</p>
                 </div>
 
                 <form className="space-y-6" onSubmit={handleSubmit(values =>{
@@ -38,54 +50,59 @@ const CreatePage = () => {
                                                         })}>
 
                     <div>
-                        <label htmlFor="title" className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label htmlFor="title" className="form-label">
                             Post Title
                         </label>
                         <input
                             id="title"
-                            className="input-field"
+                            className={errors.title ? "input-field-error" : "input-field"}
                             {...register("title")}
-                            placeholder="What's your post called?"
+                            placeholder="What's your post about?"
                             disabled={isPending}
                         />
-                        {errors.title && <ErrorMessage message={errors.title.message!} />}
+                        {errors.title && <p className="form-error">{errors.title.message}</p>}
                     </div>
 
                     <div>
-                        <label htmlFor="content" className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label htmlFor="content" className="form-label">
                             Content
                         </label>
                         <textarea
                             id="content"
                             {...register("content")}
-                            className="input-field min-h-[200px] resize-y"
+                            className={errors.content ? "input-field-error resize-y" : "textarea-field"}
                             placeholder="Share your story..."
                             disabled={isPending}
                         />
-                        {errors.content && <ErrorMessage message={errors.content.message!} />}
+                        {errors.content && <p className="form-error">{errors.content.message}</p>}
                     </div>
 
                     <div>
-                        <label htmlFor="image" className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label htmlFor="image" className="form-label">
                             Upload an Image (Optional)
                         </label>
                         <input
                             type="file"
                             id="image"
                             {...register("image")}
-                            className="input-field file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                            className="input-field file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
                             accept="image/*"
                             disabled={isPending}
                         />
-                        {errors.image && <ErrorMessage message={errors.image.message!} />}
+                        {errors.image && <p className="form-error">{errors.image.message}</p>}
                     </div>
 
                     <button
                         type="submit"
-                        className="button-secondary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="button-primary w-full"
                         disabled={isPending}
                     >
-                        {isPending ? "Creating Post..." : "Create Post"}
+                        {isPending ? (
+                            <span className="flex items-center justify-center gap-2">
+                                <span className="loading-spinner w-5 h-5"></span>
+                                Creating Post...
+                            </span>
+                        ) : "Create Post"}
                     </button>
                 </form>
             </div>

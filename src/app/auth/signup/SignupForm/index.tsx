@@ -2,12 +2,10 @@
 
 import { signUpSchema } from "@/actions/schema"
 import { SignUp } from "@/actions/sign-up"
-import ErrorMessage from "@/components/ErrorComponent"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
-import { RequestCookiesAdapter } from "next/dist/server/web/spec-extension/adapters/request-cookies"
-
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
 const SignUpForm = () => {
     const { register,
@@ -18,41 +16,82 @@ const SignUpForm = () => {
     })
 
 
-const {mutate,error} = useMutation({
-    mutationFn : SignUp
-})
+    const {mutate, isPending} = useMutation({
+        mutationFn : SignUp,
+        onSuccess: () => {
+            toast.success("Account created successfully!", {
+                description: "Welcome! Redirecting to your feed...",
+            })
+        },
+        onError: (error) => {
+            toast.error("Signup failed", {
+                description: error.message || "Unable to create account. Please try again.",
+            })
+        }
+    })
 
-return (
-    <>
-        <form onSubmit={handleSubmit(values => mutate(values) )} className="flex flex-col m-auto">
+    return (
+        <div className="form-container fade-in">
+            <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                Create Account
+            </h2>
 
-            <fieldset className="m-2">
-                <label htmlFor="email">Enter your email</label>
-                <input id="email" className="ml-2 bg-gray-300 rounded-2xl p-2 " {...register("email")} placeholder="enter your email id" />
-                {errors.email && <ErrorMessage message={errors.email.message!} />}
-            </fieldset>
+            <form onSubmit={handleSubmit(values => mutate(values))} className="space-y-6">
+                <div>
+                    <label htmlFor="email" className="form-label">Email Address</label>
+                    <input
+                        id="email"
+                        type="email"
+                        className={errors.email ? "input-field-error" : "input-field"}
+                        {...register("email")}
+                        placeholder="you@example.com"
+                        disabled={isPending}
+                    />
+                    {errors.email && <p className="form-error">{errors.email.message}</p>}
+                </div>
 
-            <fieldset className="m-2">
-                <label htmlFor="username">Enter your name</label>
-                <input id="username" className="ml-2 bg-gray-300 rounded-2xl p-2 " {...register("username")} placeholder="enter your user name" />
-                 {errors.username && <ErrorMessage message={errors.username.message!} />}
-            </fieldset>
+                <div>
+                    <label htmlFor="username" className="form-label">Username</label>
+                    <input
+                        id="username"
+                        type="text"
+                        className={errors.username ? "input-field-error" : "input-field"}
+                        {...register("username")}
+                        placeholder="Choose a username"
+                        disabled={isPending}
+                    />
+                    {errors.username && <p className="form-error">{errors.username.message}</p>}
+                </div>
 
-            <fieldset>
-                <label htmlFor="password">Enter your password</label>
-                <input id="password" type="password" {...register("password")} className="ml-2  bg-gray-300 rounded-2xl p-2 " placeholder="enter your password id" />
-                 {errors.password && <ErrorMessage message={errors.password.message!} />}
-            </fieldset>
+                <div>
+                    <label htmlFor="password" className="form-label">Password</label>
+                    <input
+                        id="password"
+                        type="password"
+                        className={errors.password ? "input-field-error" : "input-field"}
+                        {...register("password")}
+                        placeholder="Create a strong password"
+                        disabled={isPending}
+                    />
+                    {errors.password && <p className="form-error">{errors.password.message}</p>}
+                    <p className="form-helper">Must be at least 8 characters long</p>
+                </div>
 
-            <button className="button-secondary w-2/4">Sign Up !</button>
-        </form>
-
-    </>
-)
+                <button
+                    type="submit"
+                    className="button-primary w-full"
+                    disabled={isPending}
+                >
+                    {isPending ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <span className="loading-spinner w-5 h-5"></span>
+                            Creating your account...
+                        </span>
+                    ) : "Sign Up"}
+                </button>
+            </form>
+        </div>
+    )
 }
 
 export default SignUpForm
-
-// function useMutation(arg0: { mutationFn: any }): { mutate: any; error: any } {
-//     throw new Error("Function not implemented.")
-// }

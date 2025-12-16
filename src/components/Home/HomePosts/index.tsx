@@ -7,38 +7,44 @@ import Link from "next/link";
 const HomePosts = ({posts}:{posts:HomePostType}) => {
 
     return (
-        <div className="max-w-4xl mx-auto px-4">
-            <h1 className="text-5xl font-bold text-white text-center mb-8 animate-fadeInUp">
+        <div className="container-narrow">
+            <h1 className="text-5xl font-bold text-center mb-8 fade-in bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
                 Latest Posts
             </h1>
             <div className="flex flex-col gap-6">
                 {posts && posts.map(({id,title,slug,users}, index)=>
                     <Link
                         href={`/${slug}`}
-                        className="card p-6 group animate-fadeInUp hover:bg-white"
+                        className="card-interactive slide-up"
                         key={id}
                         style={{animationDelay: `${index * 0.1}s`}}
                     >
-                        <h2 className="font-bold text-2xl text-gray-800 group-hover:text-purple-600 transition-colors duration-300">
+                        <h2 className="post-title">
                             {title}
                         </h2>
                         <div className="flex items-center justify-between mt-4">
-                            <div className="flex items-center gap-2">
-                                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">
                                     {users.username.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                    <p className="text-sm text-gray-600">Written by</p>
-                                    <p className="font-semibold text-gray-800">{users.username}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Written by</p>
+                                    <p className="font-semibold text-gray-900 dark:text-gray-100">{users.username}</p>
                                 </div>
                             </div>
-                            <div className="text-purple-600 font-semibold group-hover:translate-x-2 transition-transform duration-300">
-                                Read more →
+                            <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400 font-semibold group-hover:gap-3 transition-all duration-300">
+                                <span>Read more</span>
+                                <span>→</span>
                             </div>
                         </div>
                     </Link>
                 )}
             </div>
+            {(!posts || posts.length === 0) && (
+                <div className="card text-center py-12">
+                    <p className="text-lg text-gray-500 dark:text-gray-400">No posts yet. Be the first to create one!</p>
+                </div>
+            )}
         </div>
     )
 }
