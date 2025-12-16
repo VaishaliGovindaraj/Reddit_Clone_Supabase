@@ -1,5 +1,4 @@
-import { createClient } from "../../../utils/supabase/browserclient"
-// "@/utils/supabase/browser-client";
+import { createClient } from "../../../utils/supabase/server-client";
 import { getHomePosts } from "../../../utils/supabase/queries";
 import HomePosts from "@/components/Home/HomePosts";
 
