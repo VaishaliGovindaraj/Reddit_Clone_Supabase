@@ -1,7 +1,8 @@
-import { createClient } from "./browserclient"
+import { createClient as createServerClient } from "./server-client"
+import { createClient as createBrowserClient } from "./browserclient"
 import {type QueryData } from "@supabase/supabase-js"
 
-export const  getHomePosts = async (supabase:ReturnType<typeof createClient>) => { 
+export const  getHomePosts = async (supabase: Awaited<ReturnType<typeof createServerClient>> | ReturnType<typeof createBrowserClient>) => { 
   //const supabase = createClient()
   return await supabase.from('posts')
                     .select('id,title,slug,users("username"),image')
@@ -9,7 +10,7 @@ export const  getHomePosts = async (supabase:ReturnType<typeof createClient>) =>
 }
 
 export const getSinglePost = async (slug : string) => {
-  const supabase = createClient()
+  const supabase = await createServerClient()
   return await supabase.from('posts')
                         .select('id,title,content,slug,user_id,users("username"),image,comments("comment_section","commentor_name","slug","user_id",id)')
                         .eq('slug',slug)
@@ -17,7 +18,7 @@ export const getSinglePost = async (slug : string) => {
 }
 
 export const getSearchPost = async (searchTerm : string) => {
-  const supabase = createClient()
+  const supabase = await createServerClient()
   return await supabase.from('posts')
                         .select('title,slug')
                         .ilike('title',`${searchTerm}%`)
