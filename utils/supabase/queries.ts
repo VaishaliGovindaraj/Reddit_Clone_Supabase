@@ -17,12 +17,5 @@ export const getSinglePost = async (slug : string) => {
                         .single()
 }
 
-export const getSearchPost = async (searchTerm : string) => {
-  const supabase = await createServerClient()
-  return await supabase.from('posts')
-                        .select('title,slug')
-                        .ilike('title',`${searchTerm}%`)
-}
-
 export type HomePostType = QueryData<ReturnType<typeof getHomePosts>>
 // export type CommentType = QueryData<ReturnType<typeof getSinglePost>>

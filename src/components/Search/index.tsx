@@ -3,7 +3,7 @@ import { SetStateAction, useState } from "react"
 import { Search } from "lucide-react"
 import Link from "next/link"
 import { useQuery } from "@tanstack/react-query"
-import { getSearchPost } from "../../../utils/supabase/queries"
+import { searchPosts } from "../../actions/search-posts"
 import { toast } from "sonner"
 
 const SearchInput = () => {
@@ -11,7 +11,7 @@ const SearchInput = () => {
     const {data, error} = useQuery({
         queryKey:['search-results',userInput],
         queryFn:async() => {
-            const {data,error} =await getSearchPost(userInput)
+            const {data,error} = await searchPosts(userInput)
             if(error) {
                 toast.error("Search failed", {
                     description: "Unable to search posts. Please try again."
