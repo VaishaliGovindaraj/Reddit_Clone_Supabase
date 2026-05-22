@@ -35,7 +35,7 @@ const CreatePage = () => {
         <div className="container-narrow">
             <div className="card fade-in">
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent mb-2">
+                    <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent mb-2">
                         Create New Post
                     </h1>
                     <p className="text-gray-600 dark:text-gray-400">Share your thoughts with the community</p>
@@ -85,7 +85,7 @@ const CreatePage = () => {
                             type="file"
                             id="image"
                             {...register("image")}
-                            className="input-field file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                            className="input-field text-sm file:mr-3 file:py-2 file:px-3 sm:file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
                             accept="image/*"
                             disabled={isPending}
                         />

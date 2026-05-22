@@ -9,15 +9,15 @@ const AccountLinks =async () => {
     const {data:{user},error} = await supabase.auth.getUser()
 
     return(
-        <div>
+        <div className="w-full sm:w-auto">
             {user
             ?
-            <div className="flex items-center gap-3">
-                <Link href="/create" className="button-secondary">Create Post</Link>
+            <div className="flex w-full items-center gap-2 sm:gap-3">
+                <Link href="/create" className="button-secondary flex-1 text-center sm:flex-none">Create Post</Link>
                 <LogOutButton />
             </div>
             :
-            <Link href="/auth/login" className="button-primary">Log In</Link>}
+            <Link href="/auth/login" className="button-primary inline-flex w-full justify-center sm:w-auto">Log In</Link>}
         </div>
     )
 }

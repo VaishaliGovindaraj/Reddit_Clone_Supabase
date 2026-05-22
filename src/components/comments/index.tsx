@@ -39,7 +39,7 @@ const Comments = ({ comments, currentUserId, postAuthorId, slug }: CommentArray)
 
   return (
     <div className="card fade-in" style={{animationDelay: '0.4s'}}>
-      <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
+      <h3 className="text-xl sm:text-2xl font-bold mb-5 sm:mb-6 flex items-center gap-2">
         <span className="text-2xl">💬</span>
         <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
           Comments ({comments.length})
@@ -51,13 +51,13 @@ const Comments = ({ comments, currentUserId, postAuthorId, slug }: CommentArray)
             key={item.id}
             className="comment-container"
           >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-3 flex-1">
-                <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex min-w-0 items-start gap-3 flex-1">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
                   {item.commentor_name.charAt(0).toUpperCase()}
                 </div>
-                <div className="flex-1">
-                  <p className="comment-author mb-1">{item.commentor_name}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="comment-author mb-1 truncate">{item.commentor_name}</p>
                   <p className="comment-text">{item.comment_section}</p>
                 </div>
               </div>
@@ -67,7 +67,7 @@ const Comments = ({ comments, currentUserId, postAuthorId, slug }: CommentArray)
                 <button
                   onClick={() => handleDelete(item.id, slug)}
                   disabled={deletingId === item.id}
-                  className="button-danger"
+                  className="button-danger w-full sm:w-auto"
                 >
                   {deletingId === item.id ? (
                     <span className="flex items-center gap-2">

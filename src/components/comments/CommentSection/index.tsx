@@ -29,7 +29,7 @@ const CommentSection = ({ slug ,user_id,id}: { slug: string,user_id:string,id:nu
 
   return (
     <div className="card fade-in mb-6" style={{animationDelay: '0.3s'}}>
-      <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+      <h3 className="text-lg sm:text-xl font-bold mb-4 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
         Add a Comment
       </h3>
       <form onSubmit={handleSubmit(values => {

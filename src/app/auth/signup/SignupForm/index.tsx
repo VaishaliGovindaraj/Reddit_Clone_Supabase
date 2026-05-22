@@ -32,7 +32,7 @@ const SignUpForm = () => {
 
     return (
         <div className="form-container fade-in">
-            <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
                 Create Account
             </h2>
 

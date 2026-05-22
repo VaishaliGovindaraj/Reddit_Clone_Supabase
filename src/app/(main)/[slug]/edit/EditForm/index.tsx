@@ -42,7 +42,7 @@ const EditForm = ({postId,initialValues}:{postId:number,initialValues:Pick<Table
         <div className="container-narrow">
             <div className="card fade-in">
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent mb-2">
+                    <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent mb-2">
                         Edit Post
                     </h1>
                     <p className="text-gray-600 dark:text-gray-400">Update your post details</p>
@@ -89,7 +89,7 @@ const EditForm = ({postId,initialValues}:{postId:number,initialValues:Pick<Table
                             <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                                 <p className="form-label mb-3">Current Image</p>
                                 <img
-                                    className="w-full h-auto rounded-lg shadow-md"
+                            className="w-full h-auto max-h-[60vh] rounded-lg object-contain shadow-md"
                                     src={initialValues.image}
                                     alt="Current post image"
                                 />
@@ -102,7 +102,7 @@ const EditForm = ({postId,initialValues}:{postId:number,initialValues:Pick<Table
                             type="file"
                             id="image"
                             {...register("image")}
-                            className="input-field file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                            className="input-field text-sm file:mr-3 file:py-2 file:px-3 sm:file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
                             accept="image/*"
                             disabled={isPending}
                         />

@@ -20,8 +20,8 @@ const LogOutButton =  () => {
         }
 
         return(
-            <div>
-                <button className="button-tertiary" onClick={handleLogOut}>Log Out</button>
+            <div className="flex-1 sm:flex-none">
+                <button className="button-tertiary w-full sm:w-auto" onClick={handleLogOut}>Log Out</button>
             </div>
         )
 
