@@ -8,7 +8,8 @@ export const revalidate = 60;
 export default async function Home() {
   const supabase = await createClient();
   const {data,error} = await getHomePosts(supabase)
-  
+  console.log("Data", data)
+  console.log("Error", error)
 
   return (
     <div>
