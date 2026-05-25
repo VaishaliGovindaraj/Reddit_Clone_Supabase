@@ -6,8 +6,10 @@ import { zodResolver  } from "@hookform/resolvers/zod"
 import { logInSchema } from "@/actions/schema"
 import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 const LogInForm = () => {
+    const router = useRouter()
 
     const {register,
         handleSubmit,
@@ -17,10 +19,12 @@ const LogInForm = () => {
 
     const {mutate,isPending, error} = useMutation({
         mutationFn : LogIn,
-        onSuccess: () => {
+        onSuccess: (result) => {
             toast.success("Welcome back! You're now logged in.", {
                 description: "Redirecting to homepage...",
             })
+            router.push(result.redirectTo)
+            router.refresh()
         },
         onError: (error) => {
             toast.error("Login failed", {

@@ -6,8 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 const SignUpForm = () => {
+    const router = useRouter()
     const { register,
         handleSubmit,
         formState: { errors }
@@ -18,10 +20,12 @@ const SignUpForm = () => {
 
     const {mutate, isPending} = useMutation({
         mutationFn : SignUp,
-        onSuccess: () => {
+        onSuccess: (result) => {
             toast.success("Account created successfully!", {
                 description: "Welcome! Redirecting to your feed...",
             })
+            router.push(result.redirectTo)
+            router.refresh()
         },
         onError: (error) => {
             toast.error("Signup failed", {

@@ -1,6 +1,5 @@
 'use server'
 
-import { redirect } from "next/navigation";
 import { slugify } from "../../utils/slugify";
 import { createClient } from "../../utils/supabase/server-client";
 import { postSchema } from "./schema"
@@ -38,5 +37,5 @@ export const CreatePost = async (userdata:z.infer<typeof postSchema>) => {
                 .throwOnError()
 
                 revalidatePath("/")
-                redirect(`/${slug}`)
+                return { redirectTo: `/${slug}` }
     }

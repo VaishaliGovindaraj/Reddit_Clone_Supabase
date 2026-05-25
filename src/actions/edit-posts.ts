@@ -4,7 +4,6 @@ import { postSchema } from "./schema";
 import { createClient } from "../../utils/supabase/server-client";
 import { slugify } from "../../utils/slugify";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { uploadImage } from "../../utils/supabase/upload-image";
 
 export const EditPost =async ({postId,userdata}:{postId:number,userdata:z.infer<typeof postSchema>}) => {
@@ -44,7 +43,7 @@ export const EditPost =async ({postId,userdata}:{postId:number,userdata:z.infer<
 
     if(error) throw error
     revalidatePath("/")
-    redirect(`/${updatedPost.slug}`)
+    return { redirectTo: `/${updatedPost.slug}` }
 
 }
 

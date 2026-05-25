@@ -6,8 +6,10 @@ import { useMutation } from "@tanstack/react-query"
 import { CreatePost } from "../../../actions/create-post"
 import z from "zod"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 const CreatePage = () => {
+    const router = useRouter()
 
     const schemaWithImage = postSchema.omit({image:true}).
                                         extend({image:z.unknown().transform(value =>
@@ -19,10 +21,12 @@ const CreatePage = () => {
 
     const {mutate,isPending} = useMutation({
         mutationFn:CreatePost,
-        onSuccess: () => {
+        onSuccess: (result) => {
             toast.success("Post created successfully!", {
                 description: "Your post is now live. Redirecting..."
             })
+            router.push(result.redirectTo)
+            router.refresh()
         },
         onError: (error) => {
             toast.error("Failed to create post", {

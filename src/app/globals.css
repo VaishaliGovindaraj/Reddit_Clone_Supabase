@@ -226,11 +226,11 @@ body {
   .search-results {
     @apply absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800;
     @apply rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700;
-    @apply max-h-96 overflow-y-auto z-50;
+    @apply max-h-80 overflow-y-auto z-50;
   }
 
   .search-result-item {
-    @apply px-4 py-3 hover:bg-orange-50 dark:hover:bg-gray-700;
+    @apply block w-full px-4 py-3 hover:bg-orange-50 dark:hover:bg-gray-700;
     @apply cursor-pointer transition-colors duration-150;
     @apply border-b border-gray-100 dark:border-gray-700 last:border-b-0;
   }

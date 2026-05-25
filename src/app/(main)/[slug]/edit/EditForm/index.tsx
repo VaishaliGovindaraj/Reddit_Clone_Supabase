@@ -8,8 +8,10 @@ import { postSchema } from "../../../../../actions/schema"
 import z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 const EditForm = ({postId,initialValues}:{postId:number,initialValues:Pick<Tables<'posts'>,"title"|"content"|"image">}) => {
+    const router = useRouter()
 
     const schemaWithImage = postSchema.omit({image:true}).
                                             extend({image:z.unknown().transform(value =>
@@ -26,10 +28,12 @@ const EditForm = ({postId,initialValues}:{postId:number,initialValues:Pick<Table
 
     const {mutate,isPending} = useMutation({
         mutationFn: EditPost,
-        onSuccess: () => {
+        onSuccess: (result) => {
             toast.success("Post updated successfully!", {
                 description: "Your changes have been saved. Redirecting..."
             })
+            router.push(result.redirectTo)
+            router.refresh()
         },
         onError: (error) => {
             toast.error("Failed to update post", {

@@ -2,16 +2,20 @@
 
 import { LogOut } from "@/actions/log-out"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 
 const LogOutButton =  () => {
+        const router = useRouter()
 
         const handleLogOut = async () => {
             try {
-                await LogOut()
+                const result = await LogOut()
                 toast.success("Logged out successfully", {
                     description: "Come back soon!"
                 })
+                router.push(result.redirectTo)
+                router.refresh()
             } catch (error) {
                 toast.error("Logout failed", {
                     description: "Please try again"
