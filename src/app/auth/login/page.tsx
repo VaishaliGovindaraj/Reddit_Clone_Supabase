@@ -7,7 +7,7 @@ const LogIn = () => {
         <h4 className="mb-4 text-center text-xl font-semibold"> Log In?</h4>
         <LogInForm />
         <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-                Dont have an account ?SignUp <Link className="text-red-500" href="/auth/signup">SignUp</Link>
+                Don't have an account? <Link className="text-red-500" href="/auth/signup">Sign Up</Link>
         </div>
         </div>
     )

@@ -78,7 +78,7 @@ const SignUpForm = () => {
                         disabled={isPending}
                     />
                     {errors.password && <p className="form-error">{errors.password.message}</p>}
-                    <p className="form-helper">Must be at least 8 characters long</p>
+                    <p className="form-helper">Must be at least 6 characters long</p>
                 </div>
 
                 <button
