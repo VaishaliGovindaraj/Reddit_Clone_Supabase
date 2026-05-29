@@ -45,33 +45,39 @@ const isSameOrSimilarEmail = (firstEmail: string, secondEmail: string) => {
 }
 
 export const SignUp = async (userdata: z.infer<typeof signUpSchema>) => {
-    const parsedData = signUpSchema.parse(userdata)
+    const parsedData = signUpSchema.safeParse(userdata)
+    if(!parsedData.success){
+        return { error: "Please check the signup form and try again." }
+    }
+
     const supabase = await createClient()
 
     const {data: existingUsers, error: existingUserError} = await supabase
         .from("users")
         .select("email,username")
 
-    if(existingUserError) throw existingUserError
+    if(existingUserError) return { error: "Unable to check existing accounts. Please try again." }
 
     const hasExistingAccount = existingUsers?.some((existingUser) => {
-        return isSameOrSimilarValue(existingUser.username, parsedData.username) ||
-            isSameOrSimilarEmail(existingUser.email, parsedData.email)
+        return isSameOrSimilarValue(existingUser.username, parsedData.data.username) ||
+            isSameOrSimilarEmail(existingUser.email, parsedData.data.email)
     })
 
-    if(hasExistingAccount) throw new Error(duplicateAccountMessage)
+    if(hasExistingAccount) return { error: duplicateAccountMessage }
 
     const {data:{user},error} = await supabase.auth.signUp({
-        email: parsedData.email,
-        password: parsedData.password,
+        email: parsedData.data.email,
+        password: parsedData.data.password,
     })
 
-    if(error) throw new Error(isDuplicateAccountError(error.message) ? duplicateAccountMessage : error.message)
+    if(error){
+        return { error: isDuplicateAccountError(error.message) ? duplicateAccountMessage : error.message }
+    }
 
     if(user && user.email){
-        const {error: profileError} = await supabase.from('users').insert([{id: user.id,email: user.email,username: parsedData.username}])
-        if(profileError?.code === "23505") throw new Error(duplicateAccountMessage)
-        if(profileError) throw profileError
+        const {error: profileError} = await supabase.from('users').insert([{id: user.id,email: user.email,username: parsedData.data.username}])
+        if(profileError?.code === "23505") return { error: duplicateAccountMessage }
+        if(profileError) return { error: profileError.message || "Unable to create account. Please try again." }
     }
 
     return { redirectTo: "/" }

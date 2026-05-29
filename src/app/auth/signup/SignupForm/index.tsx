@@ -21,6 +21,20 @@ const SignUpForm = () => {
     const {mutate, isPending} = useMutation({
         mutationFn : SignUp,
         onSuccess: (result) => {
+            if(result.error){
+                toast.error("Signup failed", {
+                    description: result.error,
+                })
+                return
+            }
+
+            if(!result.redirectTo){
+                toast.error("Signup failed", {
+                    description: "Unable to create account. Please try again.",
+                })
+                return
+            }
+
             toast.success("Account created successfully!", {
                 description: "Welcome! Redirecting to your feed...",
             })
