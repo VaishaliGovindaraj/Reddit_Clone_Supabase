@@ -5,9 +5,43 @@ import { signUpSchema } from "./schema"
 import z from "zod"
 
 const duplicateAccountMessage = "An account with this email or username already exists."
+const similarValueMinimumLength = 6
 const isDuplicateAccountError = (message?: string) => {
     const lowerMessage = message?.toLowerCase() || ""
     return lowerMessage.includes("already") || lowerMessage.includes("exists") || lowerMessage.includes("registered")
+}
+
+const normalizeValue = (value: string) => value.trim().toLowerCase()
+
+const isSameOrSimilarValue = (firstValue: string, secondValue: string) => {
+    const first = normalizeValue(firstValue)
+    const second = normalizeValue(secondValue)
+    const shortestLength = Math.min(first.length, second.length)
+
+    return first === second || (
+        shortestLength >= similarValueMinimumLength &&
+        (first.startsWith(second) || second.startsWith(first))
+    )
+}
+
+const getEmailParts = (email: string) => {
+    const [localPart, domain] = normalizeValue(email).split("@")
+
+    return {
+        localPart,
+        domain
+    }
+}
+
+const isSameOrSimilarEmail = (firstEmail: string, secondEmail: string) => {
+    const first = getEmailParts(firstEmail)
+    const second = getEmailParts(secondEmail)
+
+    if(!first.localPart || !first.domain || !second.localPart || !second.domain){
+        return false
+    }
+
+    return first.domain === second.domain && isSameOrSimilarValue(first.localPart, second.localPart)
 }
 
 export const SignUp = async (userdata: z.infer<typeof signUpSchema>) => {
@@ -16,12 +50,16 @@ export const SignUp = async (userdata: z.infer<typeof signUpSchema>) => {
 
     const {data: existingUsers, error: existingUserError} = await supabase
         .from("users")
-        .select("id")
-        .or(`email.eq.${parsedData.email},username.ilike.${parsedData.username}`)
-        .limit(1)
+        .select("email,username")
 
     if(existingUserError) throw existingUserError
-    if(existingUsers?.length) throw new Error(duplicateAccountMessage)
+
+    const hasExistingAccount = existingUsers?.some((existingUser) => {
+        return isSameOrSimilarValue(existingUser.username, parsedData.username) ||
+            isSameOrSimilarEmail(existingUser.email, parsedData.email)
+    })
+
+    if(hasExistingAccount) throw new Error(duplicateAccountMessage)
 
     const {data:{user},error} = await supabase.auth.signUp({
         email: parsedData.email,
