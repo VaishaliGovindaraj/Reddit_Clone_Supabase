@@ -11,17 +11,24 @@ import { useRouter } from "next/navigation"
 const CreatePage = () => {
     const router = useRouter()
 
-    const schemaWithImage = postSchema.omit({image:true}).
-                                        extend({image:z.unknown().transform(value =>
-                                        {return value as(FileList)}).optional()})
+    const schemaWithImage = postSchema.omit({ image: true }).
+        extend({
+            image: z.unknown().transform(value => { return value as (FileList) }).optional()
+        })
 
-    const {register,handleSubmit,formState : {errors}} = useForm ({
-        resolver:zodResolver(schemaWithImage)
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: zodResolver(schemaWithImage)
     })
 
-    const {mutate,isPending} = useMutation({
-        mutationFn:CreatePost,
+    const { mutate, isPending } = useMutation({
+        mutationFn: CreatePost,
         onSuccess: (result) => {
+            if (!result.redirectTo) {
+                toast.error("Failed to update post", {
+                    description: "Unable to update post. Please try again.",
+                })
+                return
+            }
             toast.success("Post created successfully!", {
                 description: "Your post is now live. Redirecting..."
             })
@@ -45,13 +52,13 @@ const CreatePage = () => {
                     <p className="text-gray-600 dark:text-gray-400">Share your thoughts with the community</p>
                 </div>
 
-                <form className="space-y-6" onSubmit={handleSubmit(values =>{
-                                                        let imageForm = new FormData();
-                                                        if(values.image?.length) {
-                                                            imageForm.append('image',values.image[0])
-                                                        }
-                                                        mutate({title:values.title,content:values.content,image:imageForm})
-                                                        })}>
+                <form className="space-y-6" onSubmit={handleSubmit(values => {
+                    let imageForm = new FormData();
+                    if (values.image?.length) {
+                        imageForm.append('image', values.image[0])
+                    }
+                    mutate({ title: values.title, content: values.content, image: imageForm })
+                })}>
 
                     <div>
                         <label htmlFor="title" className="form-label">

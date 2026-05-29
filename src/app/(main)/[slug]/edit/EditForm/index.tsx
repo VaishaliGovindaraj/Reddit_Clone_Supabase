@@ -10,25 +10,33 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
-const EditForm = ({postId,initialValues}:{postId:number,initialValues:Pick<Tables<'posts'>,"title"|"content"|"image">}) => {
+const EditForm = ({ postId, initialValues }: { postId: number, initialValues: Pick<Tables<'posts'>, "title" | "content" | "image"> }) => {
     const router = useRouter()
 
-    const schemaWithImage = postSchema.omit({image:true}).
-                                            extend({image:z.unknown().transform(value =>
-                                            {return value as(FileList)}).optional()})
+    const schemaWithImage = postSchema.omit({ image: true }).
+        extend({
+            image: z.unknown().transform(value => { return value as (FileList) }).optional()
+        })
 
-    const {register,handleSubmit,formState:{errors}} = useForm({
-        resolver:zodResolver(schemaWithImage),
-        defaultValues:{
-            title:initialValues.title,
-            content:initialValues.content || undefined,
-            image:initialValues.image
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: zodResolver(schemaWithImage),
+        defaultValues: {
+            title: initialValues.title,
+            content: initialValues.content || undefined,
+            image: initialValues.image
         }
     })
 
-    const {mutate,isPending} = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: EditPost,
         onSuccess: (result) => {
+
+            if (!result.redirectTo) {
+                toast.error("Failed to update post", {
+                    description: "Unable to update post. Please try again.",
+                })
+                return
+            }
             toast.success("Post updated successfully!", {
                 description: "Your changes have been saved. Redirecting..."
             })
@@ -53,12 +61,13 @@ const EditForm = ({postId,initialValues}:{postId:number,initialValues:Pick<Table
                 </div>
 
                 <form onSubmit={handleSubmit(values => {
-                                            let imageForm = undefined;
-                                                    if(values.image?.length && typeof values.image !== 'string') {
-                                                            imageForm= new FormData()
-                                                            imageForm.append('image',values.image[0])
-                                                        }
-                                            mutate({postId, userdata:{title:values.title,content:values.content,image:imageForm}})})} className="space-y-6">
+                    let imageForm = undefined;
+                    if (values.image?.length && typeof values.image !== 'string') {
+                        imageForm = new FormData()
+                        imageForm.append('image', values.image[0])
+                    }
+                    mutate({ postId, userdata: { title: values.title, content: values.content, image: imageForm } })
+                })} className="space-y-6">
 
                     <div>
                         <label htmlFor="title" className="form-label">
@@ -93,7 +102,7 @@ const EditForm = ({postId,initialValues}:{postId:number,initialValues:Pick<Table
                             <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                                 <p className="form-label mb-3">Current Image</p>
                                 <img
-                            className="w-full h-auto max-h-[60vh] rounded-lg object-contain shadow-md"
+                                    className="w-full h-auto max-h-[60vh] rounded-lg object-contain shadow-md"
                                     src={initialValues.image}
                                     alt="Current post image"
                                 />
