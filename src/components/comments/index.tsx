@@ -24,7 +24,14 @@ const Comments = ({ comments, currentUserId, postAuthorId, slug }: CommentArray)
   const handleDelete = async (id: number, slug: string) => {
     try {
       setDeletingId(id)
-      await deleteComment(id, slug)
+      const result = await deleteComment(id, slug)
+      if (result.error) {
+        toast.error("Failed to delete comment", {
+          description: result.error
+        })
+        return
+      }
+
       toast.success("Comment deleted successfully", {
         description: "The comment has been removed"
       })

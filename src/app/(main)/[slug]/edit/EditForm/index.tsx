@@ -30,6 +30,12 @@ const EditForm = ({ postId, initialValues }: { postId: number, initialValues: Pi
     const { mutate, isPending } = useMutation({
         mutationFn: EditPost,
         onSuccess: (result) => {
+            if (result.error) {
+                toast.error("Failed to update post", {
+                    description: result.error,
+                })
+                return
+            }
 
             if (!result.redirectTo) {
                 toast.error("Failed to update post", {

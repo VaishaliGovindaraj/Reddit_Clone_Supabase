@@ -23,9 +23,16 @@ const CreatePage = () => {
     const { mutate, isPending } = useMutation({
         mutationFn: CreatePost,
         onSuccess: (result) => {
+            if (result.error) {
+                toast.error("Failed to create post", {
+                    description: result.error,
+                })
+                return
+            }
+
             if (!result.redirectTo) {
-                toast.error("Failed to update post", {
-                    description: "Unable to update post. Please try again.",
+                toast.error("Failed to create post", {
+                    description: "Unable to create post. Please try again.",
                 })
                 return
             }

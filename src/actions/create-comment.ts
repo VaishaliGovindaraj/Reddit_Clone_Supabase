@@ -1,8 +1,8 @@
 'use server'
+
 import { createClient } from "../../utils/supabase/server-client"
 import { commentSchema } from "../actions/schema"
 import { revalidatePath } from "next/cache"
-// import { redirect } from "next/navigation"
 
 export const CreateComment = async ({
   comment_section,
@@ -13,33 +13,37 @@ export const CreateComment = async ({
   id: number,
   slug: string
 }) => {
-  try {
-    const parsedData = commentSchema.parse({ comment_section })
-
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) throw new Error("Not Authorized")
-
-    // ✅ FIX: Only fetch profile for current user
-    const { data: profile } = await supabase
-      .from("users")
-      .select("username,id")
-      .eq("id", user.id) // ✅ IMPORTANT FIX
-      .single()
-
-    await supabase
-      .from("comments")
-      .insert([
-        {
-          slug,comment_section: parsedData.comment_section,commentor_name: profile?.username || "Anonymous",user_id: profile?.id||"Anonymous" // ✅ Will now be a real UUID
-        }
-      ])
-      .throwOnError()
-
-    revalidatePath(`/${slug}`)
-  } catch (err) {
-    console.error("🔥 ERROR IN CreateComment:", err)
-    throw err
+  const parsedData = commentSchema.safeParse({ comment_section })
+  if(!parsedData.success){
+    return { error: "Please enter a comment before posting." }
   }
+
+  const supabase = await createClient()
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+  if (userError || !user) return { error: "Please log in before commenting." }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("users")
+    .select("username,id")
+    .eq("id", user.id)
+    .single()
+
+  if(profileError || !profile) return { error: "Unable to find your user profile." }
+
+  const { error } = await supabase
+    .from("comments")
+    .insert([
+      {
+        slug,
+        comment_section: parsedData.data.comment_section,
+        commentor_name: profile.username,
+        user_id: profile.id
+      }
+    ])
+
+  if(error) return { error: "Unable to add comment. Please try again." }
+
+  revalidatePath(`/${slug}`)
+  return { success: true }
 }

@@ -8,34 +8,45 @@ import { revalidatePath } from "next/cache";
 import { uploadImage } from "../../utils/supabase/upload-image";
 
 export const CreatePost = async (userdata:z.infer<typeof postSchema>) => {
-    console.log("Image Parameter",userdata.image)
-    
-    const parsedData = postSchema.parse(userdata)
-    const slug = slugify(parsedData.title)
+    const parsedData = postSchema.safeParse(userdata)
+    if(!parsedData.success){
+        return { error: "Please check the post form and try again." }
+    }
+
+    const slug = slugify(parsedData.data.title)
   
     const imageFile = userdata.image?.get("image")
-    console.log("image file",typeof imageFile)
 
     if(!(imageFile instanceof File) && imageFile !== null) {
-        throw new Error("malformed image File")
+        return { error: "Please upload a valid image file." }
     }
     
-    const publicImageUrl = imageFile instanceof File ? await uploadImage(imageFile) : null
+    let publicImageUrl = null
+    if(imageFile instanceof File){
+        try {
+            publicImageUrl = await uploadImage(imageFile)
+        } catch {
+            return { error: "Unable to upload image. Please try again." }
+        }
+    }
 
     const supabase = await createClient()
-    const {data:{user}} = await supabase.auth.getUser();
+    const {data:{user}, error: userError} = await supabase.auth.getUser();
     
 
-    if(!user) {
-        throw new Error("Not Authorized")
+    if(userError || !user) {
+        return { error: "Please log in before creating a post." }
     }
    
     const userId = user.id;
 
-    await supabase.from('posts')
-                .insert([{user_id:userId,slug:slug,...parsedData,image:publicImageUrl}])
-                .throwOnError()
+    const {error} = await supabase.from('posts')
+                .insert([{user_id:userId,slug:slug,title:parsedData.data.title,content:parsedData.data.content,image:publicImageUrl}])
 
-                revalidatePath("/")
-                return { redirectTo: `/${slug}` }
+    if(error){
+        return { error: error.code === "23505" ? "A post with this title already exists." : "Unable to create post. Please try again." }
+    }
+
+    revalidatePath("/")
+    return { redirectTo: `/${slug}` }
     }

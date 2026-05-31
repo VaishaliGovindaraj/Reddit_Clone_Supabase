@@ -13,6 +13,22 @@ const DeleteButton = ({postId}:{postId:number}) => {
             toast.loading("Deleting your post...", { id: 'delete-post' })
         },
         onSuccess: (result) => {
+            if(result.error){
+                toast.error("Failed to delete post", {
+                    id: 'delete-post',
+                    description: result.error
+                })
+                return
+            }
+
+            if(!result.redirectTo){
+                toast.error("Failed to delete post", {
+                    id: 'delete-post',
+                    description: "Please try again"
+                })
+                return
+            }
+
             toast.success("Post deleted successfully!", {
                 id: 'delete-post',
                 description: "Redirecting to homepage..."

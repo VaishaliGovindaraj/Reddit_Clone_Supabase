@@ -16,7 +16,7 @@ const SearchInput = () => {
                 toast.error("Search failed", {
                     description: "Unable to search posts. Please try again."
                 })
-                throw error
+                return []
             }
             return data
         },

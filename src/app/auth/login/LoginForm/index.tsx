@@ -20,6 +20,20 @@ const LogInForm = () => {
     const {mutate,isPending, error} = useMutation({
         mutationFn : LogIn,
         onSuccess: (result) => {
+            if(result.error){
+                toast.error("Login failed", {
+                    description: result.error,
+                })
+                return
+            }
+
+            if(!result.redirectTo){
+                toast.error("Login failed", {
+                    description: "Please check your credentials and try again.",
+                })
+                return
+            }
+
             toast.success("Welcome back! You're now logged in.", {
                 description: "Redirecting to homepage...",
             })

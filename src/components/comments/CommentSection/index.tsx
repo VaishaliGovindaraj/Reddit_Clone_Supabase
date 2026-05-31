@@ -14,7 +14,14 @@ const CommentSection = ({ slug ,user_id,id}: { slug: string,user_id:string,id:nu
 
   const { mutate, isPending } = useMutation({
     mutationFn: CreateComment,
-    onSuccess: () => {
+    onSuccess: (result) => {
+      if(result.error){
+        toast.error("Failed to add comment", {
+          description: result.error
+        })
+        return
+      }
+
       reset()
       toast.success("Comment added successfully!", {
         description: "Your comment is now visible"

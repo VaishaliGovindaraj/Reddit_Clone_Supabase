@@ -11,6 +11,20 @@ const LogOutButton =  () => {
         const handleLogOut = async () => {
             try {
                 const result = await LogOut()
+                if (result.error) {
+                    toast.error("Logout failed", {
+                        description: result.error
+                    })
+                    return
+                }
+
+                if (!result.redirectTo) {
+                    toast.error("Logout failed", {
+                        description: "Please try again"
+                    })
+                    return
+                }
+
                 toast.success("Logged out successfully", {
                     description: "Come back soon!"
                 })
